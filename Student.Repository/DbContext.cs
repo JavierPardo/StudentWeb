@@ -49,7 +49,7 @@ namespace Student.Repository
             new Exam{DateTaken=DateTime.Now.AddDays(-108),ExamName="Social Media", IsPassed=true,Score=22, StudentId=10001, ExamId=220},
             };
         }
-        public ICollection<Model.Student> Students { get; set; }
-        public ICollection<Exam> Exams { get; set; }
+        public ICollection<Model.Student> Students { get; set; } = new List<Model.Student>();
+        public ICollection<Exam> Exams { get; set; } = new List<Exam>();
     }
 }

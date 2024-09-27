@@ -22,5 +22,13 @@ namespace StudentWeb.Web.Controllers
 
             return Ok(students);
         }
+
+        [HttpGet("{studentId}")]
+        public IActionResult GetByStudentId([FromRoute] int studentId)
+        {
+            var student = _studentService.GetByStudentId(studentId);
+
+            return Ok(student);
+        }
     }
 }

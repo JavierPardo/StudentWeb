@@ -19,5 +19,10 @@ namespace Student.Repository
         {
             return _dBContext.Students;
         }
+
+        public Model.Student GetById(int studentId)
+        {
+            return _dBContext.Students.FirstOrDefault(x => x.StudentId == studentId);
+        }
     }
 }

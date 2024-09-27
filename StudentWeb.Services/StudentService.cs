@@ -20,5 +20,10 @@ namespace StudentWeb.Services
         {
             return _studentRepository.GetAll();
         }
+
+        public Student.Model.Student GetByStudentId(int studentId)
+        {
+            return _studentRepository.GetById(studentId);
+        }
     }
 }

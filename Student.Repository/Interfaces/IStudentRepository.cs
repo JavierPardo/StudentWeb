@@ -9,5 +9,6 @@ namespace Student.Repository.Interfaces
     public interface IStudentRepository
     {
         ICollection<Model.Student> GetAll();
+        Model.Student GetById(int studentId);
     }
 }

@@ -9,8 +9,9 @@ namespace Student.Model
 {
     public class Student
     {
-        [MaxLength(5)]
+        [Range(1, 99999)]
         public int StudentId { get; set; }
+
         public string FirstName { get; set; } = string.Empty;
 
         public string LastName { get; set; } = string.Empty;

@@ -11,5 +11,6 @@ namespace StudentWeb.Services.Interfaces
     public interface IStudentService
     {
         ICollection<Student.Model.Student> GetAll();
+        Student.Model.Student GetByStudentId(int studentId);
     }
 }
