@@ -15,6 +15,7 @@ namespace Student.Repository
         {
             _dBContext = dBContext;
         }
+
         public ICollection<Model.Student> GetAll()
         {
             return _dBContext.Students;
@@ -22,7 +23,14 @@ namespace Student.Repository
 
         public Model.Student GetById(int studentId)
         {
-            return _dBContext.Students.FirstOrDefault(x => x.StudentId == studentId);
+            var student = _dBContext.Students.FirstOrDefault(x => x.StudentId == studentId);
+
+            if (student == null)
+            {
+                throw new Exception(string.Format("Student not found: {0}", studentId));
+            }
+
+            return student;
         }
     }
 }

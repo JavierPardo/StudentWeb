@@ -5,6 +5,12 @@
     <title>Student Records</title>
 </head>
 <body>
+    <script>
+        (async function fetchStudents() {
+            var students = (await (await fetch("/api/students", { method: "GET" })).json());
+            debugger;
+        })()
+    </script>
     <h1>Students</h1>
 </body>
 </html>
