@@ -4,10 +4,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentWeb.Web", "StudentWeb.Web\StudentWeb.Web.csproj", "{0CF62D3C-2C28-420F-97DC-1EE97196C520}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2F5C96F0-41DF-4C5F-8199-A468F053A0BB} = {2F5C96F0-41DF-4C5F-8199-A468F053A0BB}
+		{9FF436BC-512F-42AC-9D30-5DF349D1DBBE} = {9FF436BC-512F-42AC-9D30-5DF349D1DBBE}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentWeb.Services", "StudentWeb.Services\StudentWeb.Services.csproj", "{2F5C96F0-41DF-4C5F-8199-A468F053A0BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9FF436BC-512F-42AC-9D30-5DF349D1DBBE} = {9FF436BC-512F-42AC-9D30-5DF349D1DBBE}
+		{CDBFA333-CD76-44FC-A105-B6C64C15C6F0} = {CDBFA333-CD76-44FC-A105-B6C64C15C6F0}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Student.Repository", "Student.Repository\Student.Repository.csproj", "{CDBFA333-CD76-44FC-A105-B6C64C15C6F0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9FF436BC-512F-42AC-9D30-5DF349D1DBBE} = {9FF436BC-512F-42AC-9D30-5DF349D1DBBE}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Student.Model", "Student.Model\Student.Model.csproj", "{9FF436BC-512F-42AC-9D30-5DF349D1DBBE}"
 EndProject

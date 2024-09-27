@@ -15,7 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\Student.Model\Student.Model.csproj" />
+    <ProjectReference Include="..\Student.Repository\Student.Repository.csproj" />
+    <ProjectReference Include="..\StudentWeb.Services\StudentWeb.Services.csproj" />
   </ItemGroup>
 
 </Project>
