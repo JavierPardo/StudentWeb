@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Student.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,7 @@ namespace Student.Repository.Interfaces
 {
     public interface IExamRepository
     {
+        ICollection<Exam> GetAllByStudentId(int studentId);
+        Exam GetByExamId(int examId);
     }
 }

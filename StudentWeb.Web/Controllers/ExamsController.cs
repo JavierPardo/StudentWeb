@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Student.Model;
 using StudentWeb.Services.Interfaces;
 
 namespace StudentWeb.Web.Controllers
@@ -15,10 +16,27 @@ namespace StudentWeb.Web.Controllers
             _examService = examService;
         }
 
-        [HttpGet("{StudentId}/Exam")]
-        public void GetStudentExams([FromRoute] int StudentId)
+        [HttpGet("student/{studentId}")]
+        public ActionResult<ICollection<Exam>> GetStudentExams([FromRoute] int studentId)
         {
+            var exams = _examService.GetExamsByStudentId(studentId);
 
+            return Ok(exams);
+        }
+
+        [HttpGet("{examId}")]
+        public ActionResult<ICollection<Exam>> GetExam([FromRoute] int examId)
+        {
+            var exams = _examService.GetExamByExamId(examId);
+
+            return Ok(exams);
+        }
+        [HttpPut("{examId}")]
+        public ActionResult GetExam([FromRoute] int examId, [FromBody] Exam exam)
+        {
+             _examService.UpdateExam(examId, exam);
+
+            return Ok();
         }
     }
 }

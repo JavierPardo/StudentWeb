@@ -1,16 +1,232 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <title>Student Records</title>
-</head>
-<body>
-    <script>
-        (async function fetchStudents() {
-            var students = (await (await fetch("/api/students", { method: "GET" })).json());
-            debugger;
-        })()
-    </script>
-    <h1>Students</h1>
-</body>
+    <head>
+        <meta charset="utf-8" />
+        <title>Student Records</title>
+    </head>
+    <body>
+        <style>
+            #main-board {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-between;
+            }
+            #student-table,
+            #exam-table,
+            #exam-form {
+                width: 30%;
+            }
+
+            .fieldset {
+                display: flex;
+                flex-direction: column;
+            }
+            .row {
+                display: flex;
+                flex-direction: row;
+                border: 1px solid black;
+                justify-content: space-between;
+            }
+            .row > .cell {
+                flex: 1;
+            }
+            .error-panel {
+                background-color: rgba(255, 0, 0, 0.1);
+                border: 1px red solid;
+                border-radius: 5px;
+            }
+            .row:hover {
+                background-color: lightgray;
+            }
+        </style>
+        <script>
+            async function fetchStudents() {
+                var students = await (await fetch('/api/students', { method: 'GET' })).json();
+                clearStudentTable();
+                clearExamTable();
+                clearExamForm();
+                for (let index = 0; index < students.length; index++) {
+                    drawStudentRow(students[index]);
+                }
+            }
+
+            function clearStudentTable() {
+                document.getElementById('student-table').innerHTML = '';
+            }
+
+            function clearExamTable() {
+                document.getElementById('exam-table').innerHTML = '';
+            }
+
+            function clearExamForm() {
+                document.getElementById('exam-form').innerHTML = '';
+            }
+            function drawStudentRow(student) {
+                let temp = document.getElementById('student-row');
+
+                let clon = temp.content.cloneNode(true);
+                let cellName = clon.querySelector('.cell.name');
+                let cellLastName = clon.querySelector('.cell.lastname');
+                let buttonShowScore = clon.querySelector('.cell>.show-exam');
+                buttonShowScore.onclick = fetchExamsByStudentId.bind(null, student.studentId);
+                cellName.innerHTML = student.firstName;
+                cellLastName.innerHTML = student.lastName;
+                document.getElementById('student-table').appendChild(clon);
+            }
+
+            async function fetchExamsByStudentId(studentId) {
+                var exams = await (await fetch('/api/exams/student/' + studentId, { method: 'GET' })).json();
+                var student = await (await fetch('/api/students/' + studentId, { method: 'GET' })).json();
+                clearExamTable();
+                clearExamForm();
+                fillStudent(student);
+                for (let index = 0; index < exams.length; index++) {
+                    drawExamRow(exams[index]);
+                }
+            }
+            function fillStudent(student) {
+                let templ = document.getElementById('student-detail-row');
+                
+                let studentPlaceHolder = templ.content.cloneNode(true);
+                studentPlaceHolder.querySelector('#firstName').innerHTML = student.firstName;
+                studentPlaceHolder.querySelector('#lastName').innerHTML = student.lastName;
+                document.getElementById('exam-table').appendChild(studentPlaceHolder);
+            }
+
+            function drawExamRow(exam) {
+                let temp = document.getElementById('exam-row');
+
+                let clon = temp.content.cloneNode(true);
+                let cellName = clon.querySelector('.cell.name');
+                let cellScore = clon.querySelector('.cell.score');
+                let cellStatus = clon.querySelector('.cell.status');
+                let cellDateTaken = clon.querySelector('.cell.dateTaken');
+                let buttonUpdateScore = clon.querySelector('.cell>.update-exam');
+                buttonUpdateScore.onclick = updateExam.bind(null, exam.examId);
+                cellName.innerHTML = exam.examName;
+                cellScore.innerHTML = exam.score;
+                cellStatus.innerHTML = exam.isPassed === true ? 'Passed' : exam.isPassed === false ? 'Failed' : '[Not Taken]';
+                cellDateTaken.innerHTML = new Date(exam.dateTaken).toDateString();
+                document.getElementById('exam-table').appendChild(clon);
+            }
+
+            async function updateExam(examId) {
+                clearExamForm();
+                var exam = await (await fetch('/api/exams/' + examId, { method: 'GET' })).json();
+
+                let statusValue = exam.isPassed === true ? 'Passed' : exam.isPassed === false ? 'Failed' : 'NotTaken';
+                let temp = document.getElementById('exam-temp');
+
+                let clon = temp.content.cloneNode(true);
+                let cellName = clon.querySelector('#exam-name');
+                let cellScore = clon.querySelector('#exam-score');
+                let cellStatus = clon.querySelector('input[name="status"]#status' + statusValue);
+                let cellDateTaken = clon.querySelector('#exam-date');
+                let buttonUpdateScore = clon.querySelector('#submit-exam');
+                buttonUpdateScore.onclick = submitExam.bind(null, exam.examId);
+                cellName.value = exam.examName;
+                cellScore.value = exam.score;
+                cellStatus.checked = true;
+                cellDateTaken.value = new Date(exam.dateTaken).toISOString().substr(0, 10);
+                document.getElementById('exam-form').appendChild(clon);
+            }
+
+            async function submitExam(examId) {
+                let form = document.getElementById('exam-form');
+
+                let examName = form.querySelector('#exam-name').value;
+                let score = form.querySelector('#exam-score').value;
+                let cellStatus = form.querySelector('input[name="status"]');
+                let status = cellStatus.value === 'Failed' ? false : cellStatus.value === 'Passed' ? true : null;
+                let dateTaken = form.querySelector('#exam-date').value;
+
+                let errorPanel = form.querySelector('.error-panel');
+                errorPanel.innerHTML = '';
+                if (score > 100 || score < 0) {
+                    errorPanel.innerHTML = 'Score should be between 0 and 100';
+                    return;
+                }
+                let body = {
+                    examName,
+                    score,
+                    status,
+                    dateTaken,
+                    examId
+                };
+
+                await fetch('/api/exams/' + examId, {
+                    method: 'PUT',
+                    body: JSON.stringify(body),
+                    mode: 'cors',
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Content-type': 'application/json'
+                    }
+                });
+                clearExamTable();
+                clearExamForm();
+            }
+        </script>
+        <template id="student-row">
+            <div class="row">
+                <div class="cell name"></div>
+                <div class="cell lastname"></div>
+                <div class="cell action">
+                    <button class="action show-exam">Show Exams</button>
+                </div>
+            </div>
+        </template>
+        <template id="exam-row">
+            <div class="row">
+                <div class="cell name"></div>
+                <div class="cell score"></div>
+                <div class="cell status"></div>
+                <div class="cell dateTaken"></div>
+                <div class="cell action">
+                    <button class="action update-exam">Update Exam</button>
+                </div>
+            </div>
+        </template>
+        <template id="student-detail-row">
+            <div class="row-header">
+                <h3 id="firstName"></h3>
+                <h3 id="lastName"></h3>
+            </div>
+        </template>
+        <template id="exam-temp">
+            <div class="error-panel"></div>
+            <div class="fieldset">
+                <label>Exam Name:</label>
+                <input id="exam-name" />
+            </div>
+
+            <div class="fieldset">
+                <label>Score:</label>
+                <input id="exam-score" type="number" max="100" min="0" />
+            </div>
+
+            <div class="fieldset">
+                <label>status:</label>
+                <div class="row">
+                    <label>Passed</label><input type="radio" id="statusPassed" name="status" value="Passed" /> <label>Failed</label><input type="radio" id="statusFailed" name="status" value="Failed" /> <label>Not Taken</label
+                    ><input type="radio" id="statusNotTaken" name="status" value="NotTaken" />
+                </div>
+            </div>
+
+            <div class="fieldset">
+                <label>Date Taken:</label>
+                <input id="exam-date" type="date" />
+            </div>
+
+            <button id="submit-exam">Submit</button>
+        </template>
+        <h1>Students</h1>
+        <button onclick="fetchStudents()">Refresh</button>
+        <div id="main-board">
+            <div id="student-table"></div>
+            <div id="exam-table"></div>
+            <div id="exam-form"></div>
+        </div>
+    </body>
 </html>
